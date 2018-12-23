@@ -10,15 +10,15 @@ const connection = mysql.createConnection({
     database: "bamazon"
 
 });
-connection.connect(function(err) {
+connection.connect((err) => {
     if (err) {
         console.error("error connecting: " + err.stack);
     }
     getProducts();
 });
 
-function getProducts() {
-    connection.query("SELECT * FROM products", function(err, res) {
+const getProducts = () => {
+    connection.query("SELECT * FROM products", (err, res) => {
         if (err) throw err;
     
         
@@ -29,14 +29,14 @@ function getProducts() {
       });
 }
 // Prompt the customer for a product ID
-function promptCustomerForItem(inventory) {
+const promptCustomerForItem = (inventory) => {
     // Prompts user for what they would like to purchase
     inquirer
       .prompt([
         {
           type: "input",
           name: "choice",
-          message: "What is the ID of the item you would you like to purchase? [Quit with Q]",
+          message: "Enter ID of the item you want to buy? [Quit with Q]",
           validate: function(val) {
             return !isNaN(val) || val.toLowerCase() === "q";
           }
@@ -45,8 +45,8 @@ function promptCustomerForItem(inventory) {
       .then(function(val) {
         // Check if the user wants to quit the program
         checkIfShouldExit(val.choice);
-        var choiceId = parseInt(val.choice);
-        var product = checkInventory(choiceId, inventory);
+        const choiceId = parseInt(val.choice);
+        const product = checkInventory(choiceId, inventory);
   
         // If there is a product with the id the user chose, prompt the customer for a desired quantity
         if (product) {
@@ -62,7 +62,7 @@ function promptCustomerForItem(inventory) {
   }
   
   // Prompt the customer for a product quantity
-  function promptCustomerForQuantity(product) {
+  const promptCustomerForQuantity = (product) => {
     inquirer
       .prompt([
         {
@@ -77,7 +77,7 @@ function promptCustomerForItem(inventory) {
       .then(function(val) {
         // Check if the user wants to quit the program
         checkIfShouldExit(val.quantity);
-        var quantity = parseInt(val.quantity);
+        const quantity = parseInt(val.quantity);
   
         // If there isn't enough of the chosen product and quantity, let the user know and re-run loadProducts
         if (quantity > product.stock_quantity) {
@@ -92,7 +92,7 @@ function promptCustomerForItem(inventory) {
   }
   
   // Purchase the desired quantity of the desired item
-  function makePurchase(product, quantity) {
+  const makePurchase = (product, quantity) => {
     connection.query(
       "UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id = ?",
       [quantity, product.item_id],
@@ -105,7 +105,7 @@ function promptCustomerForItem(inventory) {
   }
   
   // Check to see if the product the user chose exists in the inventory
-  function checkInventory(choiceId, inventory) {
+  const checkInventory = (choiceId, inventory) => {
     for (var i = 0; i < inventory.length; i++) {
       if (inventory[i].item_id === choiceId) {
         // If a matching product is found, return the product
@@ -117,7 +117,7 @@ function promptCustomerForItem(inventory) {
   }
   
   // Check to see if the user wants to quit the program
-  function checkIfShouldExit(choice) {
+  const checkIfShouldExit = choice => {
     if (choice.toLowerCase() === "q") {
       // Log a message and exit the current node process
       console.log("Goodbye!");
